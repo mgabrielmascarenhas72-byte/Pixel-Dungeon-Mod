@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.9.1'
+    }
+}
+
+allprojects {
+    ext {
+        appName = 'Pixel Dungeon'
+        appPackageName = 'com.watabou.pixeldungeon'
+        appVersionCode = 74
+        appVersionName = '1.9.1'
+        appAndroidCompileSDK = 36
+        appAndroidMinSDK = 8
+        appAndroidTargetSDK = 34
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
