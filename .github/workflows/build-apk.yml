@@ -1,0 +1,51 @@
+name: Build Pixel Dungeon APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos do repositorio
+        uses: actions/checkout@v4
+
+      - name: Extrair projeto
+        run: |
+          ZIP=$(find . -maxdepth 1 -type f -name "*.zip" | head -n 1)
+          if [ -z "$ZIP" ]; then
+            echo "ZIP do projeto nao encontrado"
+            exit 1
+          fi
+
+          mkdir -p /tmp/pixel-dungeon
+          unzip -q "$ZIP" -d /tmp/pixel-dungeon
+
+          cp -a /tmp/pixel-dungeon/. .
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Baixar PD-classes
+        run: |
+          git clone --depth 1 https://github.com/00-Evan/pixel-dungeon-gradle.git /tmp/pd-gradle
+          rm -rf PD-classes
+          cp -a /tmp/pd-gradle/PD-classes ./PD-classes
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Compilar APK
+        run: gradle :core:assembleDebug --stacktrace
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pixel-Dungeon-modificado
+          path: core/build/outputs/apk/debug/*.apk
