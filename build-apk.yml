@@ -1,0 +1,39 @@
+name: Build Pixel Dungeon APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Baixar PD-classes
+        run: |
+          git clone --depth 1 https://github.com/00-Evan/pixel-dungeon-gradle.git /tmp/pd-gradle
+          rm -rf PD-classes
+          cp -R /tmp/pd-gradle/PD-classes ./PD-classes
+
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Compilar APK
+        run: gradle :core:assembleDebug --stacktrace
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pixel-Dungeon-modificado
+          path: core/build/outputs/apk/debug/*.apk
