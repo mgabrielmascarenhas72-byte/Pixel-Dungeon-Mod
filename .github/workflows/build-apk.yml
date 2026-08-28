@@ -48,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Pixel-Dungeon-modificado
-          path: core/build/outputs/apk/debug/*.apk
+          path: core/build/outputs/apk/debug/App.apk
